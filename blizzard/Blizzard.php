@@ -38,13 +38,22 @@ include_once 'Exception.php';
 class Blizzard {
 
 	/**
-	 * API key.
+	 * Public key.
 	 *
 	 * @access private
 	 * @var string
 	 * @static
 	 */
-	private static $__apiKey = null;
+	private static $__publicKey;
+
+	/**
+	 * Private key.
+	 *
+	 * @access private
+	 * @var string
+	 * @static
+	 */
+	private static $__privateKey;
 
 	/**
 	 * Region.
@@ -56,15 +65,21 @@ class Blizzard {
 	private static $__region = 'us';
 
 	/**
-	 * Return the globally set API key.
+	 * Return the globally set API keys.
 	 *
 	 * @access public
+	 * @param string $key
 	 * @return string
 	 * @static
 	 * @final
 	 */
-	final public static function getApiKey() {
-		return self::$__apiKey;
+	final public static function getApiKey($key = null) {
+		$keys = array(
+			'public' => self::$__publicKey,
+			'private' => self::$__privateKey
+		);
+
+		return isset($keys[$key]) ? $keys[$key] : $keys;
 	}
 
 	/**
@@ -95,13 +110,15 @@ class Blizzard {
 	 * Set the API key.
 	 *
 	 * @access public
-	 * @param string $key
+	 * @param string $public
+	 * @param string $private
 	 * @return void
 	 * @static
 	 * @final
 	 */
-	final public static function setApiKey($key) {
-		self::$__apiKey = (string)$key;
+	final public static function setApiKey($public, $private) {
+		self::$__publicKey = (string) $public;
+		self::$__privateKey = (string) $private;
 	}
 
 	/**

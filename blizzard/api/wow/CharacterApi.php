@@ -48,13 +48,13 @@ class CharacterApi extends WowApiAbstract {
 	 * @constructor
 	 */
 	public function __construct(array $config = array()) {
-		if (empty($config['character']) || empty($config['realm'])) {
+		/*if (empty($config['character']) || empty($config['realm'])) {
 			throw new WowApiException('Please provide a character name and realm.');
 		}
 
 		parent::__construct($config);
 
-		$this->setApiUrl($this->getApiUrl() . sprintf('character/%s/%s/', $config['realm'], $config['character']));
+		$this->setApiUrl($this->getApiUrl() . sprintf('character/%s/%s/', $config['realm'], $config['character']));*/
 	}
 
 }

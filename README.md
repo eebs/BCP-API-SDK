@@ -2,12 +2,6 @@
 
 An official Blizzard PHP SDK to interact with the World of Warcraft API. Even though this is official, you are not required to use this library. Feel free to use other third-party libraries as they may be more up to date with current implementations.
 
-## Background ##
-
-[A PARAGRAPH DESCRIBING WHY YOU BUILT THIS]
-
-[ANOTHER PARAGRAPH DESCRIBING YOUR IMPETUS FOR RELEASING THIS]
-
 ## Requirements ##
 
 * PHP 5.3.x
@@ -61,7 +55,7 @@ Each class will have a set of filter methods built in that you may use to filter
 
 ### 4 - Caching your data ###
 
-By default, every API call will be cached in memory depending on the filter parameters provided. This speeds up the data mining process by not triggered the same HTTP request over and over for the exact same data. Cached items will last for the duration of the HTTP request. If you want to keep an indefinite cache, you can provide your own caching engine. Your custom caching engine must implement the blizzard\cache\CacheInterface.
+By default, every API call will be cached in memory depending on the filter parameters provided. This speeds up the data mining process by not triggering the same HTTP request over and over for the exact same data. Cached items will last for the duration of the HTTP request. If you want to keep an indefinite cache, you can provide your own caching engine. Your custom caching engine must implement the blizzard\cache\CacheInterface.
 
 	// Custom cache engine
 	class MemcacheEngine extends \blizzard\cache\CacheInterface { 
@@ -76,8 +70,10 @@ By default, every API call will be cached in memory depending on the filter para
 
 * Character API
 * Guild API
-* PvP API
-* Any Api
+* Arena Team API
+* Arena Ladder API
+* Item API
+* Any API
 
 ## License ##
 

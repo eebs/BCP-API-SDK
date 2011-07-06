@@ -65,7 +65,8 @@ abstract class ApiAbstract {
 	 */
 	protected $_config = array(
 		'apiUrl' => null,
-		'apiKey' => null,
+		'publicKey' => null,
+		'privateKey' => null,
 		'region' => 'us'
 	);
 
@@ -118,8 +119,12 @@ abstract class ApiAbstract {
 	 * @constructor
 	 */
 	public function __construct(array $config = array()) {
-		if (empty($config['apiKey'])) {
-			$config['apiKey'] = Blizzard::getApiKey();
+		if (empty($config['publicKey'])) {
+			$config['publicKey'] = Blizzard::getApiKey('public');
+		}
+
+		if (empty($config['privateKey'])) {
+			$config['privateKey'] = Blizzard::getApiKey('private');
 		}
 
 		if (empty($config['region'])) {
@@ -127,10 +132,10 @@ abstract class ApiAbstract {
 		}
 
 		$this->setRegion($config['region']);
-		$this->setApiKey($config['apiKey']);
+		$this->setApiKey($config['publicKey'], $config['privateKey']);
 		$this->setApiUrl(str_replace('{region}', $this->getRegion(), self::API_URL));
 
-		unset($config['apiKey'], $config['region'], $config['apiUrl']);
+		unset($config['publicKey'], $config['privateKey'], $config['region'], $config['apiUrl']);
 
 		if (!empty($config)) {
 			$this->_config = $config + $this->_config;
@@ -218,11 +223,17 @@ abstract class ApiAbstract {
 	 * Return the currently set API key.
 	 *
 	 * @access public
+	 * @param string $key
 	 * @return string
 	 * @final
 	 */
-	final public function getApiKey() {
-		return $this->_config['apiKey'];
+	final public function getApiKey($key = null) {
+		$keys = array(
+			'public' => $this->_config['publicKey'],
+			'private' => $this->_config['privateKey']
+		);
+
+		return isset($keys[$key]) ? $keys[$key] : $keys;
 	}
 
 	/**
@@ -320,6 +331,8 @@ abstract class ApiAbstract {
 		$curl = curl_init();
 		$url = $this->getApiUrl();
 		$query = $this->getQuery();
+		$keys = $this->getApiKey();
+		$date = date(DATE_RFC2822);
 
 		if (!empty($query)) {
 			$url .= '?'. $query;
@@ -336,9 +349,12 @@ abstract class ApiAbstract {
 			CURLOPT_HTTPGET			=> true,
 			CURLOPT_HTTPAUTH		=> CURLAUTH_ANY,
 			CURLOPT_HTTP_VERSION	=> CURL_HTTP_VERSION_NONE,
+			CURLOPT_HTTPHEADER		=> array(
+				'Authorization' => 'BNET '. $keys['public'] .':'. base64_encode(hash_hmac('sha1', "GET\n{$date}\n{$url}\n", $keys['private'], true))
+			),
 			CURLOPT_SSL_VERIFYHOST	=> false,
 			CURLOPT_SSL_VERIFYPEER	=> false,
-			CURLOPT_USERAGENT		=> 'Blizzard API Package'
+			CURLOPT_USERAGENT		=> 'Blizzard API SDK Package'
 		));
 
 		$request = curl_exec($curl);
@@ -396,12 +412,14 @@ abstract class ApiAbstract {
 	 * Set the API key.
 	 *
 	 * @access public
-	 * @param string $key
+	 * @param string $public
+	 * @param string $private
 	 * @return void
 	 * @final 
 	 */
-	final public function setApiKey($key) {
-		$this->_config['apiKey'] = (string)$key;
+	final public function setApiKey($public, $private) {
+		$this->_config['publicKey'] = (string) $public;
+		$this->_config['privateKey'] = (string) $private;
 	}
 
 	/**
@@ -413,7 +431,7 @@ abstract class ApiAbstract {
 	 * @final
 	 */
 	final public function setApiUrl($url) {
-		$this->_config['apiUrl'] = (string)$url;
+		$this->_config['apiUrl'] = (string) $url;
 	}
 
 	/**

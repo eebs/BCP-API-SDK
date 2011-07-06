@@ -74,7 +74,7 @@ class ApiResponse {
 		if (strpos($headers['content_type'], 'application/json') !== false) {
 			$this->_response = json_decode($response, true);
 		} else {
-			$this->_response = (array)$response;
+			$this->_response = (array) $response;
 		}
 	}
 
