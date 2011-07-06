@@ -8,7 +8,7 @@ An official Blizzard PHP SDK to interact with the World of Warcraft API. Even th
 * JSON - http://php.net/manual/book.json.php
 * cURL - http://php.net/manual/book.curl.php
 
-## Manual Installation ##
+### Manual Installation ###
 
 Download and extract the contents and the resulting "blizzard" folder to your servers vendors directory.
 
