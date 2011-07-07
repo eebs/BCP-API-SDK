@@ -78,9 +78,9 @@ class CacheEngine implements CacheInterface {
 	 * @return string
 	 */
 	public function key($key, $args = null) {
-		$key = (string)$key;
+		$key = str_replace('::', '.', (string) $key);
 
-		if (!empty($args) || $args == 0) {
+		if (!empty($args) || $args === 0) {
 			if (is_array($args)) {
 				$key .= '-'. implode('-', $args);
 			} else {
@@ -88,7 +88,7 @@ class CacheEngine implements CacheInterface {
 			}
 		}
 
-		return preg_replace('/[^a-z0-9\-\_]/is', '_', $key);
+		return preg_replace('/[^a-z0-9\-\_]/is', '.', $key);
 	}
 
 	/**

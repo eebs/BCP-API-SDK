@@ -332,10 +332,18 @@ abstract class ApiAbstract {
 		$url = $this->getApiUrl();
 		$query = $this->getQuery();
 		$keys = $this->getApiKey();
-		$date = date(DATE_RFC2822);
-
+		$headers = array();
+		
 		if (!empty($query)) {
 			$url .= '?'. $query;
+		}
+		
+		if (!empty($keys['public']) && !empty($keys['private'])) {
+			$date = date(DATE_RFC2822);
+			$headers = array(
+				'Date: '. $date,
+				'Authorization: BNET '. $keys['public'] .':'. base64_encode(hash_hmac('sha1', "GET\n{$date}\n{$url}\n", $keys['private'], true))
+			);
 		}
 
 		curl_setopt_array($curl, array(
@@ -348,10 +356,8 @@ abstract class ApiAbstract {
 			CURLOPT_TIMEOUT			=> 30,
 			CURLOPT_HTTPGET			=> true,
 			CURLOPT_HTTPAUTH		=> CURLAUTH_ANY,
-			CURLOPT_HTTP_VERSION	=> CURL_HTTP_VERSION_NONE,
-			CURLOPT_HTTPHEADER		=> array(
-				'Authorization' => 'BNET '. $keys['public'] .':'. base64_encode(hash_hmac('sha1', "GET\n{$date}\n{$url}\n", $keys['private'], true))
-			),
+			CURLOPT_HTTP_VERSION	=> CURL_HTTP_VERSION_1_1,
+			CURLOPT_HTTPHEADER		=> $headers,
 			CURLOPT_SSL_VERIFYHOST	=> false,
 			CURLOPT_SSL_VERIFYPEER	=> false,
 			CURLOPT_USERAGENT		=> 'Blizzard API SDK Package'

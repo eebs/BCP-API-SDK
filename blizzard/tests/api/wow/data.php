@@ -23,33 +23,30 @@
 
 use \blizzard\Exception;
 use \blizzard\api\ApiException;
-use \blizzard\api\wow\RealmApi;
+use \blizzard\api\wow\DataApi;
 use \blizzard\api\wow\WowApiException;
 
 include_once '../../tests.php';
-include_once '../../../api/wow/RealmApi.php';
+include_once '../../../api/wow/DataApi.php';
 
 try {
-	// Instantiate the Realm API
-	$realm = new RealmApi();
+	// Instantiate the Data API
+	$data = new DataApi();
 
-	// Grab a single realm
-	debug($realm->filterByName('Lightbringer'));
+	// Get classes
+	debug($data->getClasses());
 
-	// Grab multiple realms
-	debug($realm->filterByName(array('Lightbringer', 'Tichondrius')));
+	// Get guild perks
+	debug($data->getGuildPerks());
 
-	// Grab realms by population
-	debug($realm->filterByPopulation(RealmApi::POP_LOW));
+	// Get guild rewards
+	debug($data->getGuildRewards());
 
-	// Grab realms by with a queue
-	debug($realm->filterByQueue(RealmApi::QUEUE_YES));
+	// Get races
+	debug($data->getRaces());
 
-	// Grab realms based on server status
-	debug($realm->filterByStatus(RealmApi::STATUS_DOWN));
-
-	// Grab realms based on realm type
-	debug($realm->filterByType());
+	// Get item by ID
+	debug($data->getItem(49623));
 	
 } catch (WowApiException $e) {
 	debug($e->getMessage());

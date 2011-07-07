@@ -21,6 +21,14 @@
  * THE SOFTWARE.
  */
 
+use \blizzard\Blizzard;
+
+include_once '../../../Blizzard.php';
+
+// Set your API key and region globally
+Blizzard::setApiKey('public', 'private');
+Blizzard::setRegion('us');
+
 /**
  * Debug a variable by printing it to the screen.
  *
