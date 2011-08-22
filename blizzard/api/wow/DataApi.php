@@ -58,7 +58,7 @@ class DataApi extends WowApiAbstract {
 
 		$this->_baseUrl = $this->getApiUrl();
 	}
-	
+
 	/**
 	 * Return the character classes.
 	 * 
@@ -70,7 +70,19 @@ class DataApi extends WowApiAbstract {
 		
 		return $this->requestData(__METHOD__);
 	}
-	
+
+	/**
+	 * Return the character races.
+	 *
+	 * @access public
+	 * @return array
+	 */
+	public function getRaces() {
+		$this->setApiUrl($this->_baseUrl .'data/character/races');
+
+		return $this->requestData(__METHOD__);
+	}
+
 	/**
 	 * Return the guild perks.
 	 * 
@@ -82,7 +94,7 @@ class DataApi extends WowApiAbstract {
 		
 		return $this->requestData(__METHOD__);
 	}
-	
+
 	/**
 	 * Return the guild rewards.
 	 * 
@@ -94,7 +106,7 @@ class DataApi extends WowApiAbstract {
 		
 		return $this->requestData(__METHOD__);
 	}
-	
+
 	/**
 	 * Return an item based on ID.
 	 * 
@@ -107,23 +119,23 @@ class DataApi extends WowApiAbstract {
 			throw new WowApiException(sprintf('Item ID %s invalid for %s.', $id, __METHOD__));
 		}
 		
-		$this->setApiUrl($this->_baseUrl .'data/item/'. $id);
+		$this->setApiUrl($this->_baseUrl .'item/'. $id);
 		
 		return $this->requestData(__METHOD__, $id);
 	}
-	
+
 	/**
-	 * Return the character races.
+	 * Return the item classes.
 	 * 
 	 * @access public
 	 * @return array
 	 */
-	public function getRaces() {
-		$this->setApiUrl($this->_baseUrl .'data/character/races');
+	public function getItemClasses() {
+		$this->setApiUrl($this->_baseUrl .'data/item/classes');
 		
 		return $this->requestData(__METHOD__);
 	}
-	
+
 	/**
 	 * Request specific API data and cache the result.
 	 * 
