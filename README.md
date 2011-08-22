@@ -1,6 +1,7 @@
-# Blizzard SDK v0.1.0 #
+# BCP-API-SDK #
 
-An official Blizzard PHP SDK to interact with the World of Warcraft API. Even though this is official, you are not required to use this library. Feel free to use other third-party libraries as they may be more up to date with current implementations.
+An unofficial Blizzard PHP SDK to interact with the World of Warcraft API. This is a continuation of the BlizzardSDK-PHP library which has been discontinued (to my knowledge).
+I cloned the Blizzard repo before it disappeared and I am continuing developement on this SDK.
 
 ## Requirements ##
 
@@ -12,13 +13,13 @@ An official Blizzard PHP SDK to interact with the World of Warcraft API. Even th
 
 Download and extract the contents and the resulting "blizzard" folder to your servers vendors directory.
 
-	http://github.com/Blizzard/BlizzardSDK-PHP/zipball/master
+	https://github.com/eebs/BCP-API-SDK/zipball/master
 
 ### GIT Installation ###
 
 Clone the repo into your servers vendors directory.
 
-	git clone git://github.com/Blizzard/BlizzardSDK-PHP.git blizzard
+	git clone git://github.com/eebs/BCP-API-SDK.git bcp-api-sdk
 
 ## Usage ##
 
@@ -42,8 +43,22 @@ Each type of API call will have an associated class: realm, character, guild, et
 
 	$realm = new \blizzard\api\wow\RealmApi();
 	$results = $realm->results();
+	
+### 3 - Adding addition query parameters ###
 
-### 3 - Filtering the results ###
+Some classes have optional query parameters that may be set. The character resource has some optional fields like guild, stats, talents, items. (For the full list see the official documentation: http://blizzard.github.com/api-wow-docs/)
+You may add these options fields to their respective classes.
+
+	use \blizzard\api\wow\GuildApi;
+
+	$guild = new \blizzard\api\wow\GuildApi(array(
+		'guild' => 'guildName',
+		'realm' => 'realmName'
+	));
+	$guild->setQueryParam('fields', 'members,achievements');
+	$results = $guild->results();
+
+### 4 - Filtering the results ###
 
 Each class will have a set of filter methods built in that you may use to filter down the result set. Additionally, you can use the other built in methods to modify the result set to your needs.
 
@@ -53,7 +68,7 @@ Each class will have a set of filter methods built in that you may use to filter
 	$results = $realm->filterByStatus(RealmApi::STATUS_DOWN);
 	$results = $realm->filterByName(array('Lightbringer', 'Tichondrius'));
 
-### 4 - Caching your data ###
+### 5 - Caching your data ###
 
 By default, every API call will be cached in memory depending on the filter parameters provided. This speeds up the data mining process by not triggering the same HTTP request over and over for the exact same data. Cached items will last for the duration of the HTTP request. If you want to keep an indefinite cache, you can provide your own caching engine. Your custom caching engine must implement the blizzard\cache\CacheInterface.
 
@@ -68,8 +83,6 @@ By default, every API call will be cached in memory depending on the filter para
 
 ## Todo ##
 
-* Character API
-* Guild API
 * Arena Team API
 * Arena Ladder API
 * Item API
