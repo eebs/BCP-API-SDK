@@ -28,12 +28,13 @@ Clone the repo into your servers vendors directory.
 You may set your API key (optional) and region (defaults to "us") globally by using the Blizzard class or you can overwrite on a per instance basis. These settings will be used for all API calls.
 
 	// Globally
-	\blizzard\Blizzard::setApiKey('yourApiKey');
+	\blizzard\Blizzard::setApiKey('yourPublicApiKey', 'yourPrivateApiKey');
 	\blizzard\Blizzard::setRegion('us');
 
 	// Instance
 	$realm = new \blizzard\api\wow\RealmApi(array(
-		'apiKey' => 'yourApiKey',
+		'publicKey' => 'yourPublicApiKey',
+		'privateKey' => 'yourPrivateApiKey',
 		'region' => 'us'
 	));
 
