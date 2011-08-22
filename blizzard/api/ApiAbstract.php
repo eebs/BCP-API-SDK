@@ -228,10 +228,21 @@ abstract class ApiAbstract {
 	 * @final
 	 */
 	final public function getApiKey($key = null) {
+		$keys = array();
+		if(isset(self::$__publicKey)){
+			$keys['public'] = self::$__publicKey;
+		}
+
+		if(isset(self::$__publicKey)){
+			$keys['private'] = self::$__privateKey;
+		}
+
+		/*
 		$keys = array(
 			'public' => $this->_config['publicKey'],
 			'private' => $this->_config['privateKey']
 		);
+		*/
 
 		return isset($keys[$key]) ? $keys[$key] : $keys;
 	}
