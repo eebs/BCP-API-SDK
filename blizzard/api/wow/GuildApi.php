@@ -13,7 +13,6 @@ include_once 'WowApiException.php';
  *
  * @author		Ebrahim Kobeissi
  * @copyright	Ebrahim Kobeissi
- * @version		0.1.0
  * @package		blizzard.api.wow
  */
 class GuildApi extends WowApiAbstract {
