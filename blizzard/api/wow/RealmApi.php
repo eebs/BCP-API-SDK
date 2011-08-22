@@ -2,7 +2,7 @@
 /**
  * Copyright (c) 2010-2011 Blizzard Entertainment
  *
- * Permission is herefilterBy granted, free of charge, to any person obtaining a copy
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -42,6 +42,7 @@ include_once 'WowApiAbstract.php';
  *		$realm->filterByType(RealmApi::TYPE_PVE);
  *
  * @author		Miles Johnson
+ * @author		Ebrahim Kobeissi
  * @copyright	Blizzard Entertainment
  * @version		0.1.0
  * @package		blizzard.api.wow
@@ -161,6 +162,21 @@ class RealmApi extends WowApiAbstract {
 		}
 
 		return $this->filterBy(__METHOD__, 'name', $name);
+	}
+
+	/**
+	 * Get realm(s) based on slug.
+	 *
+	 * @access public
+	 * @param string|array $name
+	 * @return array
+	 */
+	public function filterBySlug($slug) {
+		if (empty($slug)) {
+			throw new WowApiException(sprintf('Slug required for %s.', __METHOD__));
+		}
+
+		return $this->filterBy(__METHOD__, 'slug', $slug);
 	}
 
 	/**
