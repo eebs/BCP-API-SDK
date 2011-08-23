@@ -137,6 +137,18 @@ class DataApi extends WowApiAbstract {
 	}
 
 	/**
+	 * Return the battlegroups
+	 *
+	 * @access public
+	 * @return array
+	 */
+	public function getBattlegroups() {
+		$this->setApiUrl($this->_baseUrl .'data/battlegroups/');
+
+		return $this->requestData(__METHOD__);
+	}
+
+	/**
 	 * Request specific API data and cache the result.
 	 * 
 	 * @access protected
