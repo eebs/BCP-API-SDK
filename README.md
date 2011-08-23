@@ -85,10 +85,8 @@ By default, every API call will be cached in memory depending on the filter para
 ## Todo ##
 
 * Support Last Modified Headers (I currently have very limited understanding of this)
-
-* Arena Team API
 * Arena Ladder API
-* Item API
+* Extend Auction API to allow for additional filtering
 * Any API
 
 ## License ##
