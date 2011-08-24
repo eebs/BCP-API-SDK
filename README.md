@@ -65,7 +65,7 @@ Each class will have a set of filter methods built in that you may use to filter
 
 	use \blizzard\api\wow\RealmApi;
 
-	$realm = new RealmApi();
+	$realm = new \blizzard\api\wow\RealmApi();
 	$results = $realm->filterByStatus(RealmApi::STATUS_DOWN);
 	$results = $realm->filterByName(array('Lightbringer', 'Tichondrius'));
 
@@ -82,10 +82,245 @@ By default, every API call will be cached in memory depending on the filter para
 	$realm = new \blizzard\api\wow\RealmApi();
 	$realm->setCacheEngine(new MemcacheEngine());
 
+## Examples ##
+
+### Arena Ladder API ###
+
+	use \blizzard\api\wow\ArenaLadderApi;
+
+	$config = array(
+		'teamsize'		=> \blizzard\api\wow\ArenaLadderApi::SIZE_2V2,
+		'battlegroup'	=> 'Bloodlust',
+	);
+	$arena = new blizzard\api\wow\ArenaLadderApi($config);
+
+Valid values for team size are:
+
+* SIZE_2V2
+* SIZE_3V3
+* SIZE_5V5
+
+Returns all ladder results, defaults to the first 50 entries.
+Note that for filterBy methods, you do not need to call results() first, it is automatically called.
+
+	$allArenaLadderResults = $arena->results();
+
+Returns all alliance arena teams in the result set.
+
+	$arenaFactionResults = $arena->filterByFaction(\blizzard\api\wow\ArenaLadderApi::FAC_ALLIANCE);
+
+Valid values for factions are:
+
+* FAC_ALLIANCE
+* FAC_HORDE
+
+Returns all arena teams on the realm Ner'zhul.
+
+	$arenaRealmResults = $arena->filterByRealm('nerzhul');
+
+Returns all arena teams with the name 'Team Name'.
+
+	$arenaNameResults = $arena->filterByName('Team Name');
+
+### Arena Team API ###
+
+	use \blizzard\api\wow\ArenaTeamApi;
+
+	$config = array(
+		'realm'			=> 'eredar',
+		'teamsize'		=> \blizzard\api\wow\ArenaTeamApi::SIZE_2V2,
+		'teamname'		=> 'Dragonslayer Dispels',
+	);
+	$arena = new blizzard\api\wow\ArenaTeamApi($config);
+
+Valid values for team size are:
+
+* SIZE_2V2
+* SIZE_3V3
+* SIZE_5V5
+
+Returns the 2v2 arena team 'Dragonslayer Dispels' on the realm Eredar.
+
+	$arenaTeamResults = $arena->results();
+
+### Auction API ###
+
+	use \blizzard\api\wow\AuctionApi;
+
+	$config = array(
+		'realm'		=> 'nerzhul',
+	);
+
+	$auction = new blizzard\api\wow\AuctionApi($config);
+
+Returns all auctions for the realm Ner'zhul.
+Note that for filterBy methods, you do not need to call results() first, it is automatically called.
+
+	$allAuctionResults = $auction->results();
+
+Returns all horde auctions.
+
+	$factionResults = $auction->filterByFaction(\blizzard\api\wow\AuctionApi::FAC_HORDE);
+
+Valid values for factions are:
+
+* FAC_ALLIANCE
+* FAC_HORDE
+* FAC_NEUTRAL
+
+Returns all auctions owned by 'Nissel' on the realm Ner'zhul.
+
+	$nameResults = $auction->filterByName('Nissel');
+
+Returns all auctions for item id 59219.
+
+	$itemResults = $auction->filterByItem('59219');
+
+Returns all auctions with a time left of Long.
+
+	$timeResults = $auction->filterByTimeLeft(\blizzard\api\wow\AuctionApi::TIME_LONG);
+
+Valid values for time left are:
+
+* TIME_VERY_LONG
+* TIME_LONG
+* TIME_MEDIUM
+* TIME_SHORT
+
+Returns the last modified time for the realm's auctions.
+
+	$lastModified = $auction->getLastModified();
+
+### Character API ###
+
+	use \blizzard\api\wow\CharacterApi;
+
+	$config = array(
+		'character'	=> 'Nissel',
+		'realm'		=> 'nerzhul',
+	);
+
+	$character = new blizzard\api\wow\CharacterApi($config);
+
+You can set addition query parameters by using the setQueryParam() method.
+This will return the character's guild info, what items they are wearing, and additional stats.
+For a full list of character fields see the [Blizzard Documentation](http://blizzard.github.com/api-wow-docs/#id3380301).
+
+	$character->setQueryParam('fields', 'items,guild,stats');
+
+Returns character data for the character Nissel on the realm Ner'zhul with any additional data specified by setQueryParam().
+
+	$characterResults = $character->results();
+
+### Data API ###
+
+	use \blizzard\api\wow\DataApi;
+
+	$data = new blizzard\api\wow\DataApi();
+
+Returns the character classes.
+
+	$data->getClasses();
+
+Returns the character races.
+
+	$data->getRaces();
+
+Returns the guild perks.
+
+	$data->getGuildPerks();
+
+Returns the guild rewards.
+
+	$data->getGuildRewards();
+
+Returns an item based on ID.
+
+	$data->getItem('59219');
+
+Returns the item classes.
+
+	$data->getItemClasses();
+
+Returns the battlegroups.
+
+	$data->getBattlegroups();
+
+### Guild API ###
+
+	use \blizzard\api\wow\GuildApi;
+
+	$config = array(
+		'guild'	=> 'Mìdnight Chaos',
+		'realm'	=> 'nerzhul',
+	);
+
+	$guild = new blizzard\api\wow\GuildApi($config);
+
+Returns guild information for the guild Mìdnight Chaos on the realm Ner'zhul.
+
+	$guildResults = $guild->results();
+
+### Realm API ###
+
+	use \blizzard\api\wow\RealmApi;
+
+	$realm = new blizzard\api\wow\RealmApi();
+
+Returns all realm info.
+
+	$realmResults = $realm->results();
+
+Returns realm information for the realm Ner'zhul.
+
+	$nameResults = $realm->filterByName("Ner'zhul");
+
+Returns realm information for the realm Ner'zhul.
+
+	$slugResults = $realm->filterBySlug('nerzhul');
+
+Returns all realms with a High population.
+
+	$populationResults = $realm->filterByPopulation(\blizzard\api\wow\RealmApi::POP_HIGH);
+
+Valid values for population are:
+
+* POP_LOW
+* POP_MEDIUM
+* POP_HIGH
+
+Returns all realms with a queue.
+
+	$queueResults = $realm->filterByQueue(\blizzard\api\wow\RealmApi::QUEUE_YES);
+
+Valid values for queue are:
+
+* QUEUE_YES
+* QUEUE_NO
+
+Returns all realms with a status of up.
+
+	$statusResults = $realm->filterByStatus(\blizzard\api\wow\RealmApi::STATUS_UP);
+
+Valid values for status are:
+
+* STATUS_UP
+* STATUS_DOWN
+
+Returns all realms with a type of PvE.
+
+	$typeResults = $realm->filterByType(\blizzard\api\wow\RealmApi::TYPE_PVE);
+
+Valid values for type are:
+
+* TYPE_PVE
+* TYPE_PVP
+* TYPE_RP
+* TYPE_RPPVP
+
 ## Todo ##
 
 * Support Last Modified Headers (I currently have very limited understanding of this)
-* Arena Ladder API
 * Extend Auction API to allow for additional filtering
 * Any API
 
