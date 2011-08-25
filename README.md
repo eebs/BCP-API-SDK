@@ -36,9 +36,9 @@ You may set your API key (optional) and region (defaults to "us") globally by us
 
 	// Instance
 	$realm = new RealmApi(array(
-		'publicKey' => 'yourPublicApiKey',
-		'privateKey' => 'yourPrivateApiKey',
-		'region' => 'us'
+		'publicKey'		=> 'yourPublicApiKey',
+		'privateKey'	=> 'yourPrivateApiKey',
+		'region'		=> 'us'
 	));
 
 ### 2 - Using the source APIs ###
