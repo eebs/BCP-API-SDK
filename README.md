@@ -177,7 +177,8 @@ Returns all auctions owned by 'Nissel' on the realm Ner'zhul.
 
 	$nameResults = $auction->filterByName('Nissel');
 
-Returns all auctions for item id 59219.
+Returns all auctions for item id 59219. This will return items for all auction houses, with no differentiation between factions.
+To only return items from a specific faction, see the section titled "Additional Filtering".
 
 	$itemResults = $auction->filterByItem('59219');
 
@@ -195,6 +196,45 @@ Valid values for time left are:
 Returns the last modified time for the realm's auctions.
 
 	$lastModified = $auction->getLastModified();
+
+#### Additional Filtering ####
+
+The base ApiAbstract class contains a method for performing additional filtering on an array.
+If you were interested in a specific item, but only in horde auction houses, you would need to do the following.
+
+	use \blizzard\api\wow\AuctionApi;
+
+	$config = array(
+		'realm'		=> 'nerzhul',
+	);
+
+	$auction = new AuctionApi($config);
+	$hordeResults = $auction->filterByFaction(AuctionApi::FAC_HORDE);
+	$hordeItemResults = $auction->filter($hordeResults, 'item', '52987');
+
+ApiAbstract::filter($results, $key, $filter) takes in three parameters. $results is the array to filter on. Typically this will be an array of arrays, with the inner arrays representing items, auctions, character, realms, etc. $key is the key you want to search , and $filter is the value to match. For example, auctions have the key 'item' that dictates which item is being auctioned. If you specify 'item' as the key, it will match $filter against the value in the 'item' element.
+Because AuctionApi extends ApiAbstract, filter can be called from AuctionApi.
+
+If you wanted to filter based on a range, or check if a value is higher or lower than a specific number, you can use a callback function passed into ApiAbstract::filter()'s $filter parameter.
+Here is an example of returning all auctions for item '52987' with a buyout greater than 649900.
+
+	$itemResults = $auction->filterByItem('52987');
+
+	$callback = function($value){
+		return ($value > 649900);
+	};
+	$callbackResults = $auction->filter($itemResults, 'buyout', $callback);
+
+If you wanted to return all auctions in a range you could do the following.
+
+	$itemResults = $auction->filterByItem('52987');
+
+	$low = 500000;
+	$high = 700000;
+	$callback = function($value) use ($low, $high){
+		return ($low < $value && $value < $high);
+	};
+	$callbackResults = $auction->filter($itemResults, 'buyout', $callback);
 
 ### Character API ###
 
