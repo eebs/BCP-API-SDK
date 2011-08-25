@@ -28,11 +28,14 @@ Clone the repo into your servers vendors directory.
 You may set your API key (optional) and region (defaults to "us") globally by using the Blizzard class or you can overwrite on a per instance basis. These settings will be used for all API calls.
 
 	// Globally
-	\blizzard\Blizzard::setApiKey('yourPublicApiKey', 'yourPrivateApiKey');
-	\blizzard\Blizzard::setRegion('us');
+	use \blizzard\Blizzard;
+	use \blizzard\api\wow\RealmApi;
+
+	Blizzard::setApiKey('yourPublicApiKey', 'yourPrivateApiKey');
+	Blizzard::setRegion('us');
 
 	// Instance
-	$realm = new \blizzard\api\wow\RealmApi(array(
+	$realm = new RealmApi(array(
 		'publicKey' => 'yourPublicApiKey',
 		'privateKey' => 'yourPrivateApiKey',
 		'region' => 'us'
@@ -42,7 +45,9 @@ You may set your API key (optional) and region (defaults to "us") globally by us
 
 Each type of API call will have an associated class: realm, character, guild, etc. You may instantiate any of these classes to fetch the data you desire. Once instantiated, use the results() method to return the default result set.
 
-	$realm = new \blizzard\api\wow\RealmApi();
+	use \blizzard\api\wow\RealmApi;
+
+	$realm = new RealmApi();
 	$results = $realm->results();
 	
 ### 3 - Adding addition query parameters ###
@@ -52,7 +57,7 @@ You may add these options fields to their respective classes.
 
 	use \blizzard\api\wow\GuildApi;
 
-	$guild = new \blizzard\api\wow\GuildApi(array(
+	$guild = new GuildApi(array(
 		'guild' => 'guildName',
 		'realm' => 'realmName'
 	));
@@ -65,7 +70,7 @@ Each class will have a set of filter methods built in that you may use to filter
 
 	use \blizzard\api\wow\RealmApi;
 
-	$realm = new \blizzard\api\wow\RealmApi();
+	$realm = new RealmApi();
 	$results = $realm->filterByStatus(RealmApi::STATUS_DOWN);
 	$results = $realm->filterByName(array('Lightbringer', 'Tichondrius'));
 
@@ -79,7 +84,7 @@ By default, every API call will be cached in memory depending on the filter para
 	}
 
 	// Use your class
-	$realm = new \blizzard\api\wow\RealmApi();
+	$realm = new RealmApi();
 	$realm->setCacheEngine(new MemcacheEngine());
 
 ## Examples ##
@@ -89,10 +94,10 @@ By default, every API call will be cached in memory depending on the filter para
 	use \blizzard\api\wow\ArenaLadderApi;
 
 	$config = array(
-		'teamsize'		=> \blizzard\api\wow\ArenaLadderApi::SIZE_2V2,
+		'teamsize'		=> ArenaLadderApi::SIZE_2V2,
 		'battlegroup'	=> 'Bloodlust',
 	);
-	$arena = new blizzard\api\wow\ArenaLadderApi($config);
+	$arena = new ArenaLadderApi($config);
 
 Valid values for team size are:
 
@@ -107,7 +112,7 @@ Note that for filterBy methods, you do not need to call results() first, it is a
 
 Returns all alliance arena teams in the result set.
 
-	$arenaFactionResults = $arena->filterByFaction(\blizzard\api\wow\ArenaLadderApi::FAC_ALLIANCE);
+	$arenaFactionResults = $arena->filterByFaction(ArenaLadderApi::FAC_ALLIANCE);
 
 Valid values for factions are:
 
@@ -128,10 +133,10 @@ Returns all arena teams with the name 'Team Name'.
 
 	$config = array(
 		'realm'			=> 'eredar',
-		'teamsize'		=> \blizzard\api\wow\ArenaTeamApi::SIZE_2V2,
+		'teamsize'		=> ArenaTeamApi::SIZE_2V2,
 		'teamname'		=> 'Dragonslayer Dispels',
 	);
-	$arena = new blizzard\api\wow\ArenaTeamApi($config);
+	$arena = new ArenaTeamApi($config);
 
 Valid values for team size are:
 
@@ -151,7 +156,7 @@ Returns the 2v2 arena team 'Dragonslayer Dispels' on the realm Eredar.
 		'realm'		=> 'nerzhul',
 	);
 
-	$auction = new blizzard\api\wow\AuctionApi($config);
+	$auction = new AuctionApi($config);
 
 Returns all auctions for the realm Ner'zhul.
 Note that for filterBy methods, you do not need to call results() first, it is automatically called.
@@ -160,7 +165,7 @@ Note that for filterBy methods, you do not need to call results() first, it is a
 
 Returns all horde auctions.
 
-	$factionResults = $auction->filterByFaction(\blizzard\api\wow\AuctionApi::FAC_HORDE);
+	$factionResults = $auction->filterByFaction(AuctionApi::FAC_HORDE);
 
 Valid values for factions are:
 
@@ -178,7 +183,7 @@ Returns all auctions for item id 59219.
 
 Returns all auctions with a time left of Long.
 
-	$timeResults = $auction->filterByTimeLeft(\blizzard\api\wow\AuctionApi::TIME_LONG);
+	$timeResults = $auction->filterByTimeLeft(AuctionApi::TIME_LONG);
 
 Valid values for time left are:
 
@@ -200,7 +205,7 @@ Returns the last modified time for the realm's auctions.
 		'realm'		=> 'nerzhul',
 	);
 
-	$character = new blizzard\api\wow\CharacterApi($config);
+	$character = new CharacterApi($config);
 
 You can set addition query parameters by using the setQueryParam() method.
 This will return the character's guild info, what items they are wearing, and additional stats.
@@ -216,7 +221,7 @@ Returns character data for the character Nissel on the realm Ner'zhul with any a
 
 	use \blizzard\api\wow\DataApi;
 
-	$data = new blizzard\api\wow\DataApi();
+	$data = new DataApi();
 
 Returns the character classes.
 
@@ -255,7 +260,7 @@ Returns the battlegroups.
 		'realm'	=> 'nerzhul',
 	);
 
-	$guild = new blizzard\api\wow\GuildApi($config);
+	$guild = new GuildApi($config);
 
 Returns guild information for the guild Mìdnight Chaos on the realm Ner'zhul.
 
@@ -265,7 +270,7 @@ Returns guild information for the guild Mìdnight Chaos on the realm Ner'zhul.
 
 	use \blizzard\api\wow\RealmApi;
 
-	$realm = new blizzard\api\wow\RealmApi();
+	$realm = new RealmApi();
 
 Returns all realm info.
 
@@ -281,7 +286,7 @@ Returns realm information for the realm Ner'zhul.
 
 Returns all realms with a High population.
 
-	$populationResults = $realm->filterByPopulation(\blizzard\api\wow\RealmApi::POP_HIGH);
+	$populationResults = $realm->filterByPopulation(RealmApi::POP_HIGH);
 
 Valid values for population are:
 
@@ -291,7 +296,7 @@ Valid values for population are:
 
 Returns all realms with a queue.
 
-	$queueResults = $realm->filterByQueue(\blizzard\api\wow\RealmApi::QUEUE_YES);
+	$queueResults = $realm->filterByQueue(RealmApi::QUEUE_YES);
 
 Valid values for queue are:
 
@@ -300,7 +305,7 @@ Valid values for queue are:
 
 Returns all realms with a status of up.
 
-	$statusResults = $realm->filterByStatus(\blizzard\api\wow\RealmApi::STATUS_UP);
+	$statusResults = $realm->filterByStatus(RealmApi::STATUS_UP);
 
 Valid values for status are:
 
@@ -309,7 +314,7 @@ Valid values for status are:
 
 Returns all realms with a type of PvE.
 
-	$typeResults = $realm->filterByType(\blizzard\api\wow\RealmApi::TYPE_PVE);
+	$typeResults = $realm->filterByType(RealmApi::TYPE_PVE);
 
 Valid values for type are:
 
