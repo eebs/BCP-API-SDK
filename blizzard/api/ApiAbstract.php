@@ -111,6 +111,14 @@ abstract class ApiAbstract {
 	private $__cache;
 
 	/**
+	 * Response http_code.
+	 *
+	 * @access protected
+	 * @var int
+	 */
+	protected $_httpCode;
+
+	/**
 	 * Store the configuration.
 	 *
 	 * @access public
@@ -130,10 +138,15 @@ abstract class ApiAbstract {
 		if (empty($config['region'])) {
 			$config['region'] = Blizzard::getRegion();
 		}
+		
+		if (empty($config['headers'])){
+			$config['headers'] = array();
+		}
 
 		$this->setRegion($config['region']);
 		$this->setApiKey($config['publicKey'], $config['privateKey']);
 		$this->setApiUrl(str_replace('{region}', $this->getRegion(), self::API_URL));
+		$this->setHeaders($config['headers']);
 
 		unset($config['publicKey'], $config['privateKey'], $config['region'], $config['apiUrl']);
 
@@ -358,6 +371,8 @@ abstract class ApiAbstract {
 				'Authorization: BNET '. $keys['public'] .':'. base64_encode(hash_hmac('sha1', "GET\n{$date}\n{$url}\n", $keys['private'], true))
 			);
 		}
+		
+		$headers = array_merge($headers, $this->_headers);
 
 		curl_setopt_array($curl, array(
 			CURLOPT_URL				=> $url,
@@ -386,6 +401,8 @@ abstract class ApiAbstract {
 		}
 
 		curl_close($curl);
+		
+		$this->_httpCode = $headers['http_code'];
 
 		return new ApiResponse($response, $headers);
 	}
@@ -425,6 +442,28 @@ abstract class ApiAbstract {
 	 */
 	final public function schema($field = null) {
 		return isset($this->_schema[$field]) ? $this->_schema[$field] : $this->_schema;
+	}
+	
+	/**
+	 * Get the httpCode.
+	 *
+	 * @access public
+	 * @return string
+	 * @final
+	 */
+	final public function getHttpCode() {
+		return $this->_httpCode;
+	}
+
+	/**
+	 * Return true if the response code was not 304.
+	 *
+	 * @access public
+	 * @return bool
+	 * @final
+	 */
+	final public function isModified() {
+		return ($this->_httpCode != 304);
 	}
 
 	/**
@@ -538,6 +577,46 @@ abstract class ApiAbstract {
 	 */
 	final public function setQueryWhitelist(array $params) {
 		$this->_whitelist = $params;
+	}
+
+	/**
+	 * Add a single header
+	 *
+	 * @access public
+	 * @param string $params
+	 * @return void
+	 * @final
+	 */
+	final public function addHeader($param) {
+		$this->_headers[] = $param;
+	}
+	
+	/**
+	 * Add an array of headers
+	 *
+	 * @access public
+	 * @param array $params
+	 * @return void
+	 * @final
+	 */
+	final public function addHeaders($params) {
+		$this->_headers = array_merge($this->_headers, $params);
+	}
+
+	/**
+	 * Set all the headers.
+	 *
+	 * @access public
+	 * @param string|array $params
+	 * @return void
+	 * @final
+	 */
+	final public function setHeaders($params) {
+		if(is_array($params)){
+			$this->_headers = $params;
+		}else{
+			$this->_headers = array($params);
+		}
 	}
 
 }

@@ -87,6 +87,30 @@ By default, every API call will be cached in memory depending on the filter para
 	$realm = new RealmApi();
 	$realm->setCacheEngine(new MemcacheEngine());
 
+### 6 - Using the Last Modified Header ###
+
+In order to limit the number of requests you make to the API server, you can use the If-Modified-Since header. You set this header (or any other header) in the config array that is passed to the API class when it is instantiated. If the data has not changed since the time you sent in the header, rather than returning the data an HTTP 304 response is sent back. If the data has changed, it is returned as usual.
+
+	use \blizzard\api\wow\CharacterApi;
+	
+	$config = array(
+		'character'	=> 'Nissel',
+		'realm'		=> 'nerzhul',
+		'headers'	=> 'If-Modified-Since: ' . date(DATE_RFC2822, 1314634561),
+	);
+
+	$character = new CharacterApi($config);
+	$results = $character->results();
+	
+	if($character->isModified()){
+		// Do something with $results
+	}else{
+		// Fetch from your database
+		// or maybe do nothing
+	}
+	
+You can check to see if any results were returned when using the If-Modified-Since header by using the isModified() method. It simply returns true or false. Note that you should not try to use the results without performing this check, as there may not be any results. If you want to force a return of the data, simply do not include the If-Modified-Since header. Also note that the header must be assigned to the 'headers' key of the configuration array, or it must be part of an array of header strings assigned to the 'headers' key.
+	
 ## Examples ##
 
 ### Arena Ladder API ###
@@ -158,10 +182,14 @@ Returns the 2v2 arena team 'Dragonslayer Dispels' on the realm Eredar.
 
 	$auction = new AuctionApi($config);
 
+Returns the meta info for the realm Ner'zhul.
+
+	$metaAuctionResults = $auction->results();
+	
 Returns all auctions for the realm Ner'zhul.
 Note that for filterBy methods, you do not need to call results() first, it is automatically called.
 
-	$allAuctionResults = $auction->results();
+	$allAuctionResults = $auction->getAuctions();
 
 Returns all horde auctions.
 
@@ -192,10 +220,6 @@ Valid values for time left are:
 * TIME_LONG
 * TIME_MEDIUM
 * TIME_SHORT
-
-Returns the last modified time for the realm's auctions.
-
-	$lastModified = $auction->getLastModified();
 
 #### Additional Filtering ####
 
@@ -367,9 +391,7 @@ Valid values for type are:
 
 ## Todo ##
 
-* Support Last Modified Headers (I currently have very limited understanding of this)
-* Extend Auction API to allow for additional filtering
-* Any API
+* Any other API as it becomes available
 
 ## License ##
 

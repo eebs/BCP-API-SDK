@@ -70,6 +70,7 @@ class AuctionApi extends WowApiAbstract {
 	 * @param array $config
 	 * @return void
 	 * @constructor
+	 * @throws WoWApiException
 	 */
 	public function __construct(array $config = array()) {
 		if (empty($config['realm'])) {
@@ -78,8 +79,7 @@ class AuctionApi extends WowApiAbstract {
 
 		parent::__construct($config);
 
-		$this->_baseUrl = $this->getApiUrl();
-		$this->setApiUrl($this->getAuctionDataUrl());
+		$this->setApiUrl($this->getApiUrl() . sprintf('auction/data/%s/', $this->_config['realm']));
 	}
 
 	/**
@@ -87,23 +87,30 @@ class AuctionApi extends WowApiAbstract {
 	 *
 	 * @access protected
 	 * @return void
+	 * @throws WoWApiException
 	 */
-	protected function getAuctionDataUrl(){
-		$this->setApiUrl($this->getApiUrl() . sprintf('auction/data/%s/', $this->_config['realm']));
+	public function getAuctions(){
+		$results = $this->results();
+		if(!isset($results['files'])){
+			throw new WowApiException('No results were returned. Check for usage of If-Modified-Since.');
+		}
+		$this->setApiUrl($results['files'][0]['url']);
+		
+		$engine = $this->getCacheEngine();
+		$key = $engine->key(self::CACHE_KEY . 'auctions');
 
+		if ($engine->has($key)) {
+			return $engine->get($key);
+		}
+		
 		$request = $this->request();
 		$results = $request->response();
 
-		foreach($results['files'] as $file){
-			$auctionDataUrl = $file['url'];
-			$this->_lastModified = $file['lastModified'];
+		if (!empty($results)) {
+			$engine->set($key, $results);
 		}
 
-		return $auctionDataUrl;
-	}
-
-	public function getLastModified(){
-		return $this->_lastModified;
+		return $results;
 	}
 
 	/**
@@ -191,7 +198,7 @@ class AuctionApi extends WowApiAbstract {
 	 * @return array
 	 */
 	protected function filterAuctionsBy($method, $field, $filter){
-		$this->cache();
+		$this->getAuctions();
 		$engine = $this->getCacheEngine();
 
 		$key = $engine->key($method, $filter);
@@ -200,7 +207,7 @@ class AuctionApi extends WowApiAbstract {
 			return $engine->get($key);
 		}
 
-		$fullResults = $engine->get(self::CACHE_KEY);
+		$fullResults = $engine->get(self::CACHE_KEY . 'auctions');
 
 		$filterOn = array_merge($fullResults['alliance']['auctions'], $fullResults['horde']['auctions'], $fullResults['neutral']['auctions']);
 
