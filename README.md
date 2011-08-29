@@ -236,6 +236,8 @@ If you wanted to return all auctions in a range you could do the following.
 	};
 	$callbackResults = $auction->filter($itemResults, 'buyout', $callback);
 
+Note that the callback function must return true or false. It should return true if the value passed in should be in the result set, and false if it should not. Also note that this additional filtering can be done on any result set from any API class, not just AuctionApi.
+
 ### Character API ###
 
 	use \blizzard\api\wow\CharacterApi;
