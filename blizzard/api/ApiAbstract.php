@@ -53,9 +53,9 @@ abstract class ApiAbstract {
 	const API_URL = 'http://{region}.battle.net/api/';
 
 	/**
-	 * Cache key for default result set.
+	 * Cache key for result set.
 	 */
-	const CACHE_KEY = '__cache';
+	protected $_cacheKey;
 
 	/**
 	 * Configuration.
@@ -154,6 +154,7 @@ abstract class ApiAbstract {
 			$this->_config = $config + $this->_config;
 		}
 
+		$this->_cacheKey = get_called_class();
 		$this->setCacheEngine(new CacheEngine());
 	}
 
@@ -228,7 +229,7 @@ abstract class ApiAbstract {
 			return $engine->get($key);
 		}
 
-		$results = $this->filter($engine->get(self::CACHE_KEY), $field, $filter);
+		$results = $this->filter($engine->get($this->_cacheKey), $field, $filter);
 		$engine->set($key, $results);
 
 		return $results;
@@ -429,7 +430,7 @@ abstract class ApiAbstract {
 	final public function results() {
 		$this->cache();
 
-		return $this->getCacheEngine()->get(self::CACHE_KEY);
+		return $this->getCacheEngine()->get($this->_cacheKey);
 	}
 
 	/**

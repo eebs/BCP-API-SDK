@@ -126,7 +126,7 @@ class ArenaLadderApi extends WowApiAbstract {
 	 * @final
 	 */
 	final public function cache() {
-		if ($this->getCacheEngine()->has(self::CACHE_KEY)) {
+		if ($this->getCacheEngine()->has($this->_cacheKey)) {
 			return true;
 		}
 
@@ -134,7 +134,7 @@ class ArenaLadderApi extends WowApiAbstract {
 		$results = $request->response();
 
 		if (!empty($results)) {
-			$this->getCacheEngine()->set(self::CACHE_KEY, $results['arenateam']);
+			$this->getCacheEngine()->set($this->_cacheKey, $results['arenateam']);
 			return true;
 		}
 

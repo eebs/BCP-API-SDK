@@ -97,7 +97,7 @@ class AuctionApi extends WowApiAbstract {
 		$this->setApiUrl($results['files'][0]['url']);
 		
 		$engine = $this->getCacheEngine();
-		$key = $engine->key(self::CACHE_KEY . 'auctions');
+		$key = $engine->key($this->_cacheKey . 'auctions');
 
 		if ($engine->has($key)) {
 			return $engine->get($key);
@@ -127,7 +127,7 @@ class AuctionApi extends WowApiAbstract {
 
 		$this->cache();
 		$engine = $this->getCacheEngine();
-		$results = $engine->get(self::CACHE_KEY);
+		$results = $engine->get($this->_cacheKey);
 
 		if(is_array($faction)){
 			$resultArray = array();
@@ -207,7 +207,7 @@ class AuctionApi extends WowApiAbstract {
 			return $engine->get($key);
 		}
 
-		$fullResults = $engine->get(self::CACHE_KEY . 'auctions');
+		$fullResults = $engine->get($this->_cacheKey . 'auctions');
 
 		$filterOn = array_merge($fullResults['alliance']['auctions'], $fullResults['horde']['auctions'], $fullResults['neutral']['auctions']);
 
@@ -225,7 +225,7 @@ class AuctionApi extends WowApiAbstract {
 	 * @final
 	 */
 	final public function cache() {
-		if ($this->getCacheEngine()->has(self::CACHE_KEY)) {
+		if ($this->getCacheEngine()->has($this->_cacheKey)) {
 			return true;
 		}
 
@@ -233,7 +233,7 @@ class AuctionApi extends WowApiAbstract {
 		$results = $request->response();
 
 		if (!empty($results)) {
-			$this->getCacheEngine()->set(self::CACHE_KEY, $results);
+			$this->getCacheEngine()->set($this->_cacheKey, $results);
 			return true;
 		}
 
